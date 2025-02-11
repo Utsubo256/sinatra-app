@@ -1,5 +1,6 @@
 <h1>メモアプリ</h1>
 <form action="/memos/<%= @memo[:id] %>" method="post">
+  <input type="hidden" name="_method" value="patch" />
   <div>
     <input type="text" value="<%= @memo[:title] %>" name="title" id="title" />
   </div>
