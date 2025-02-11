@@ -6,6 +6,10 @@ def sanitize(text)
   Rack::Utils.escape_html(text)
 end
 
+get '/' do
+  redirect "/memos"
+end
+
 get '/memos' do
   json = JSON.parse(File.read('./data/memos.json'), symbolize_names: true)
   @memos = json[:memos]
