@@ -57,3 +57,7 @@ delete '/memos/:memo_id' do
   File.write('./data/memos.json', JSON.dump(result_json))
   redirect "/memos"
 end
+
+not_found do
+  erb :not_found
+end
