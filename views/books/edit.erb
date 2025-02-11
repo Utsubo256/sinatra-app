@@ -1,0 +1,12 @@
+<h1>メモアプリ</h1>
+<form action="/memos/<%= @memo[:id] %>" method="post">
+  <div>
+    <input type="text" value="<%= @memo[:title] %>" name="title" id="title" />
+  </div>
+  <div>
+    <textarea name="description" id="description"><%= @memo[:description] %></textarea>
+  </div>
+
+  <input type="submit" name="commit" value="変更" />
+</form>
+<a href="/memos/<%= @memo[:id] %>">戻る</a>

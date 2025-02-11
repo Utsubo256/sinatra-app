@@ -29,3 +29,19 @@ post '/memos' do
   File.write('./data/memos.json', JSON.dump(result_json))
   redirect "/memos/#{adding_memo[:id]}"
 end
+
+get '/memos/:memo_id/edit' do
+  json = JSON.parse(File.read('./data/memos.json'), symbolize_names: true)
+  @memo = json[:memos].find { |memo| memo[:id] == params[:memo_id].to_i }
+  erb :'books/edit'
+end
+
+post '/memos/:memo_id' do
+  json = JSON.parse(File.read('./data/memos.json'), symbolize_names: true)
+  result_json = json
+  target_index = result_json[:memos].find_index { |memo| memo[:id] == params[:memo_id].to_i }
+  updating_memo = { id: result_json[:memos][target_index][:id], title: sanitize(params[:title]), description: sanitize(params[:description]) }
+  result_json[:memos][target_index] = updating_memo
+  File.write('./data/memos.json', JSON.dump(result_json))
+  redirect "/memos/#{updating_memo[:id]}"
+end
