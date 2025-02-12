@@ -1,13 +1,13 @@
 <h1>メモアプリ</h1>
 <form action="/memos/<%= @memo[:id] %>" method="post">
-  <input type="hidden" name="_method" value="patch" />
+  <input type="hidden" name="_method" value="patch">
   <div>
-    <input type="text" value="<%= @memo[:title] %>" name="title" id="title" class="textbox" />
+    <input type="text" value="<%= @memo[:title] %>" name="title" id="title" class="textbox">
   </div>
   <div>
     <textarea name="description" id="description" class="textarea"><%= @memo[:description] %></textarea>
   </div>
 
-  <input type="submit" name="commit" value="変更" class="button" />
+  <input type="submit" name="commit" value="変更" class="button">
 </form>
 <a href="/memos/<%= @memo[:id] %>">戻る</a>

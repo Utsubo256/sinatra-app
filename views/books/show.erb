@@ -5,8 +5,8 @@
 <div class="actions">
   <a href="/memos/<%= @memo[:id] %>/edit" class="button">変更</a>
   <form action="/memos/<%= @memo[:id] %>" method="post">
-    <input type="hidden" name="_method" value="delete" />
-    <input type="submit" name="commit" value="削除" class="button" />
+    <input type="hidden" name="_method" value="delete">
+    <input type="submit" name="commit" value="削除" class="button">
   </form>
 </div>
 
