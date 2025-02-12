@@ -1,0 +1,36 @@
+.button {
+    text-decoration: none;
+    background: orange;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    font-size: 12px;
+    width: 60px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.textbox {
+    width: 160px;
+    padding: 4px 8px;
+    border: 1px solid;
+}
+
+.textarea {
+    width: 160px;
+    height: 100px;
+    padding: 4px 8px;
+    border: 1px solid;
+    margin-top: 10px;
+}
