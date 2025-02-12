@@ -7,7 +7,7 @@ def sanitize(text)
 end
 
 get '/' do
-  redirect "/memos"
+  redirect '/memos'
 end
 
 get '/memos' do
@@ -55,7 +55,7 @@ delete '/memos/:memo_id' do
   remaining_memos = json[:memos].reject { |memo| memo[:id] == params[:memo_id].to_i }
   result_json = { id_counter: json[:id_counter] + 1, memos: remaining_memos }
   File.write('./data/memos.json', JSON.dump(result_json))
-  redirect "/memos"
+  redirect '/memos'
 end
 
 not_found do
