@@ -7,7 +7,7 @@ gem 'sinatra'
 gem 'webrick'
 
 group :development, :test do
-  gem 'erb_lint', require: false
+  gem 'erb_lint'
   gem 'rerun'
-  gem 'rubocop', require: false
+  gem 'rubocop'
 end
