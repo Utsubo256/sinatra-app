@@ -26,7 +26,13 @@ DB_NAME=db_name
 USER_NAME=user_name
 ```
 
-5. アプリケーションを立ち上げる
+5. テーブルを作成する
+
+```ruby
+ruby database.rb
+```
+
+6. アプリケーションを立ち上げる
 
 ```
 bundle exec rerun app.rb
