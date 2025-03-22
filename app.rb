@@ -4,17 +4,15 @@ require 'sinatra'
 require 'pg'
 require 'dotenv/load'
 
-TARGET_COLUMNS = %w[title description]
+TARGET_COLUMNS = %w[title description].freeze
 
-def connect_db
-  PG.connect(dbname: ENV['DB_NAME'], user: ENV['DB_USER']) do |conn|
-    yield conn
-  end
+def connect_db(&block)
+  PG.connect(dbname: ENV['DB_NAME'], user: ENV['DB_USER'], &block)
 end
 
 def load_memo_data
   connect_db do |conn|
-    conn.exec("SELECT * FROM memos ORDER BY id DESC")
+    conn.exec('SELECT * FROM memos ORDER BY id DESC')
   end
 end
 
@@ -31,29 +29,29 @@ end
 
 def find_memo(params)
   connect_db do |conn|
-    conn.exec_params("SELECT * FROM memos WHERE id = $1", [params["memo_id"].to_i])
+    conn.exec_params('SELECT * FROM memos WHERE id = $1', [params['memo_id'].to_i])
   end.first
 end
 
 def create_memo(params)
   sanitized_params = sanitize_params(params)
   connect_db do |conn|
-    conn.prepare("memo_creation", "INSERT INTO memos (title, description) VALUES ($1, $2) RETURNING id")
-    conn.exec_prepared("memo_creation", [sanitized_params[:title], sanitized_params[:description]])
+    conn.prepare('memo_creation', 'INSERT INTO memos (title, description) VALUES ($1, $2) RETURNING id')
+    conn.exec_prepared('memo_creation', [sanitized_params[:title], sanitized_params[:description]])
   end.first
 end
 
 def update_memo(params)
   sanitized_params = sanitize_params(params)
   connect_db do |conn|
-    conn.prepare("memo_update", "UPDATE memos SET title = $1, description = $2 WHERE id = $3")
-    conn.exec_prepared("memo_update", [sanitized_params["title"], sanitized_params["description"], params["memo_id"].to_i])
+    conn.prepare('memo_update', 'UPDATE memos SET title = $1, description = $2 WHERE id = $3')
+    conn.exec_prepared('memo_update', [sanitized_params['title'], sanitized_params['description'], params['memo_id'].to_i])
   end
 end
 
 def destroy_memo(params)
   connect_db do |conn|
-    conn.exec_params("DELETE FROM memos WHERE id = $1", [params["memo_id"].to_i])
+    conn.exec_params('DELETE FROM memos WHERE id = $1', [params['memo_id'].to_i])
   end
 end
 
@@ -77,7 +75,7 @@ end
 
 post '/memos' do
   created_memo = create_memo(params)
-  redirect "/memos/#{created_memo["id"]}"
+  redirect "/memos/#{created_memo['id']}"
 end
 
 get '/memos/:memo_id/edit' do
