@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gem 'rackup'
 gem 'sinatra'
 gem 'webrick'
+gem 'pg'
 
 group :development, :test do
   gem 'erb_lint'

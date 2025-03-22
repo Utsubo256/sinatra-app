@@ -1,19 +1,59 @@
 # frozen_string_literal: true
 
 require 'sinatra'
+require 'pg'
 
-MEMO_PATH = './data/memos.json'
+TARGET_COLUMNS = %w[title description]
+
+def connect_db
+  PG.connect(dbname: 'utsubo', user: 'utsubo') do |conn|
+    yield conn
+  end
+end
 
 def load_memo_data
-  JSON.parse(File.read(MEMO_PATH), symbolize_names: true)
+  connect_db do |conn|
+    conn.exec("SELECT * FROM memos ORDER BY id DESC")
+  end
 end
 
 def sanitize(text)
   Rack::Utils.escape_html(text)
 end
 
-def find_memo(memos, target_id)
-  memos.find { |memo| memo[:id] == target_id }
+def sanitize_params(params)
+  TARGET_COLUMNS.each do |target_column|
+    params[target_column] = sanitize(params[target_column])
+  end
+  params
+end
+
+def find_memo(params)
+  connect_db do |conn|
+    conn.exec_params("SELECT * FROM memos WHERE id = $1", [params["memo_id"].to_i])
+  end.first
+end
+
+def create_memo(params)
+  sanitized_params = sanitize_params(params)
+  connect_db do |conn|
+    conn.prepare("memo_creation", "INSERT INTO memos (title, description) VALUES ($1, $2) RETURNING id")
+    conn.exec_prepared("memo_creation", [sanitized_params[:title], sanitized_params[:description]])
+  end.first
+end
+
+def update_memo(params)
+  sanitized_params = sanitize_params(params)
+  connect_db do |conn|
+    conn.prepare("memo_update", "UPDATE memos SET title = $1, description = $2 WHERE id = $3")
+    conn.exec_prepared("memo_update", [sanitized_params["title"], sanitized_params["description"], params["memo_id"].to_i])
+  end
+end
+
+def destroy_memo(params)
+  connect_db do |conn|
+    conn.exec_params("DELETE FROM memos WHERE id = $1", [params["memo_id"].to_i])
+  end
 end
 
 get '/' do
@@ -21,8 +61,7 @@ get '/' do
 end
 
 get '/memos' do
-  json = load_memo_data
-  @memos = json[:memos]
+  @memos = load_memo_data
   erb :'books/index'
 end
 
@@ -31,40 +70,27 @@ get '/memos/new' do
 end
 
 get '/memos/:memo_id' do
-  json = load_memo_data
-  @memo = find_memo(json[:memos], params[:memo_id].to_i)
+  @memo = find_memo(params)
   erb :'books/show'
 end
 
 post '/memos' do
-  json = load_memo_data
-  adding_memo = { id: json[:id_counter] + 1, title: sanitize(params[:title]), description: sanitize(params[:description]) }
-  result_json = { id_counter: json[:id_counter] + 1, memos: [*json[:memos], adding_memo] }
-  File.write(MEMO_PATH, JSON.dump(result_json))
-  redirect "/memos/#{adding_memo[:id]}"
+  created_memo = create_memo(params)
+  redirect "/memos/#{created_memo["id"]}"
 end
 
 get '/memos/:memo_id/edit' do
-  json = load_memo_data
-  @memo = find_memo(json[:memos], params[:memo_id].to_i)
+  @memo = find_memo(params)
   erb :'books/edit'
 end
 
 patch '/memos/:memo_id' do
-  json = load_memo_data
-  result_json = json
-  target_index = result_json[:memos].find_index { |memo| memo[:id] == params[:memo_id].to_i }
-  updating_memo = { id: result_json[:memos][target_index][:id], title: sanitize(params[:title]), description: sanitize(params[:description]) }
-  result_json[:memos][target_index] = updating_memo
-  File.write(MEMO_PATH, JSON.dump(result_json))
-  redirect "/memos/#{updating_memo[:id]}"
+  update_memo(params)
+  redirect "/memos/#{params[:memo_id]}"
 end
 
 delete '/memos/:memo_id' do
-  json = load_memo_data
-  remaining_memos = json[:memos].reject { |memo| memo[:id] == params[:memo_id].to_i }
-  result_json = { id_counter: json[:id_counter] + 1, memos: remaining_memos }
-  File.write(MEMO_PATH, JSON.dump(result_json))
+  destroy_memo(params)
   redirect '/memos'
 end
 
