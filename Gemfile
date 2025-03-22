@@ -6,6 +6,7 @@ gem 'rackup'
 gem 'sinatra'
 gem 'webrick'
 gem 'pg'
+gem 'dotenv'
 
 group :development, :test do
   gem 'erb_lint'

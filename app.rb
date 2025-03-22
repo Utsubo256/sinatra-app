@@ -2,11 +2,12 @@
 
 require 'sinatra'
 require 'pg'
+require 'dotenv/load'
 
 TARGET_COLUMNS = %w[title description]
 
 def connect_db
-  PG.connect(dbname: 'utsubo', user: 'utsubo') do |conn|
+  PG.connect(dbname: ENV['DB_NAME'], user: ENV['DB_USER']) do |conn|
     yield conn
   end
 end
