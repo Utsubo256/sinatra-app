@@ -13,7 +13,26 @@ cd sinatra-app
 bundle install
 ```
 
-3. アプリケーションを立ち上げる
+3. 用意されている.env.sampleファイルをコピして.envファイルを作成する
+
+```
+cp .env.sample .env
+```
+
+4. envファイルの環境変数に使用しているPostgreSQLのデーターベース名、ユーザー名を書き込む
+
+```ruby
+DB_NAME=db_name
+USER_NAME=user_name
+```
+
+5. テーブルを作成する
+
+```ruby
+ruby database.rb
+```
+
+6. アプリケーションを立ち上げる
 
 ```
 bundle exec rerun app.rb
