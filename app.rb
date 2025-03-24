@@ -4,7 +4,7 @@ require 'sinatra'
 require 'pg'
 require 'dotenv/load'
 
-TARGET_COLUMNS = %w[title description].freeze
+TARGET_COLUMNS = %i[title description].freeze
 
 def connect_db(&block)
   PG.connect(dbname: ENV['DB_NAME'], user: ENV['DB_USER'], &block)
@@ -13,7 +13,7 @@ end
 def load_memo_data
   connect_db do |conn|
     conn.exec('SELECT * FROM memos ORDER BY id DESC')
-  end
+  end.map { |record| record.transform_keys(&:to_sym) }
 end
 
 def sanitize_params(params)
@@ -25,8 +25,8 @@ end
 
 def find_memo(params)
   connect_db do |conn|
-    conn.exec_params('SELECT * FROM memos WHERE id = $1', [params['memo_id'].to_i])
-  end.first
+    conn.exec_params('SELECT * FROM memos WHERE id = $1', [params[:memo_id].to_i])
+  end.first.transform_keys(&:to_sym)
 end
 
 def create_memo(params)
@@ -34,20 +34,20 @@ def create_memo(params)
   connect_db do |conn|
     conn.prepare('memo_creation', 'INSERT INTO memos (title, description) VALUES ($1, $2) RETURNING id')
     conn.exec_prepared('memo_creation', [sanitized_params[:title], sanitized_params[:description]])
-  end.first
+  end.first.transform_keys(&:to_sym)
 end
 
 def update_memo(params)
   sanitized_params = sanitize_params(params)
   connect_db do |conn|
     conn.prepare('memo_update', 'UPDATE memos SET title = $1, description = $2 WHERE id = $3')
-    conn.exec_prepared('memo_update', [sanitized_params['title'], sanitized_params['description'], params['memo_id'].to_i])
+    conn.exec_prepared('memo_update', [sanitized_params[:title], sanitized_params[:description], params[:memo_id].to_i])
   end
 end
 
 def destroy_memo(params)
   connect_db do |conn|
-    conn.exec_params('DELETE FROM memos WHERE id = $1', [params['memo_id'].to_i])
+    conn.exec_params('DELETE FROM memos WHERE id = $1', [params[:memo_id].to_i])
   end
 end
 
@@ -71,7 +71,7 @@ end
 
 post '/memos' do
   created_memo = create_memo(params)
-  redirect "/memos/#{created_memo['id']}"
+  redirect "/memos/#{created_memo[:id]}"
 end
 
 get '/memos/:memo_id/edit' do
