@@ -19,20 +19,22 @@ bundle install
 cp .env.sample .env
 ```
 
-4. envファイルの環境変数に使用しているPostgreSQLのデーターベース名、ユーザー名を書き込む
+4. PostgreSQLのデータベースとユーザーを用意する
+
+5. envファイルの環境変数に用意したPostgreSQLのデーターベース名、ユーザー名を書き込む
 
 ```ruby
 DB_NAME=db_name
 USER_NAME=user_name
 ```
 
-5. テーブルを作成する
+6. テーブルを作成する
 
 ```ruby
 ruby database.rb
 ```
 
-6. アプリケーションを立ち上げる
+7. アプリケーションを立ち上げる
 
 ```
 bundle exec rerun app.rb
