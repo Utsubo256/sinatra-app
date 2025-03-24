@@ -16,13 +16,9 @@ def load_memo_data
   end
 end
 
-def sanitize(text)
-  Rack::Utils.escape_html(text)
-end
-
 def sanitize_params(params)
   TARGET_COLUMNS.each do |target_column|
-    params[target_column] = sanitize(params[target_column])
+    params[target_column] = Rack::Utils.escape_html(params[target_column])
   end
   params
 end
