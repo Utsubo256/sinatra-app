@@ -7,7 +7,7 @@ require 'dotenv/load'
 TARGET_COLUMNS = %i[title description].freeze
 
 def connect_db(&block)
-  PG.connect(dbname: ENV['DB_NAME'], user: ENV['DB_USER'], &block)
+  PG.connect(dbname: ENV['DB_NAME'], user: ENV['DB_USER'], password: ENV['DB_PASSWORD'], &block)
 end
 
 def load_memo_data

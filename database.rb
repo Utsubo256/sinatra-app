@@ -3,7 +3,7 @@
 require 'pg'
 require 'dotenv/load'
 
-PG.connect(dbname: ENV['DB_NAME'], user: ENV['USER_NAME']) do |conn|
+PG.connect(dbname: ENV['DB_NAME'], user: ENV['DB_USER'], password: ENV['DB_PASSWORD']) do |conn|
   conn.exec(
     "CREATE TABLE memos (
        id SERIAL PRIMARY KEY,
