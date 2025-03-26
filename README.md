@@ -19,7 +19,23 @@ bundle install
 cp .env.sample .env
 ```
 
-4. PostgreSQLのデータベースとユーザーを用意する
+4. PostgreSQLのユーザーとデータベースを用意する
+
+- PostgreSQLサーバへログイン
+
+psqlコマンドおよびデフォルトユーザーは各環境に応じて準備する。
+`postgres`がデフォルトユーザーとして存在するものとして、下記を実行する。
+
+```shell
+psql -U postgres
+```
+
+- ユーザーとデーターベースの作成
+
+```sql
+CREATE USER sample;
+CREATE DATABASE sample OWNER sample;
+```
 
 5. envファイルの環境変数に用意したPostgreSQLのデーターベース名、ユーザー名を書き込む
 
