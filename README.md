@@ -33,7 +33,7 @@ psql -U postgres
 - ユーザーとデーターベースの作成
 
 ```sql
-CREATE USER sample;
+CREATE USER sample WITH PASSWORD 'sample';
 CREATE DATABASE sample OWNER sample;
 ```
 
