@@ -2,6 +2,8 @@
 
 source 'https://rubygems.org'
 
+gem 'dotenv'
+gem 'pg'
 gem 'rackup'
 gem 'sinatra'
 gem 'webrick'
